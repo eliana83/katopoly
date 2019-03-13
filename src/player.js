@@ -1,25 +1,23 @@
 
 module.exports = {
     /*
-        function getNewPosition(playerPosition, diceScore, maxLocation): returns the position of the player after rolling dices
+        function getNewPosition(player, diceScore, maxLocation): updates current position and previous position of the player after rolling dices
     
-        input: playerPosition            playerPosition before rolling dices
+        input: player                    player object
         input: diceScore                 total dice result
         input: maxLocation               total number of locations in the board                  
     
-        output: updatedPlayerPosition    updatedPlayerPosition after rolling dices
     */
-    getNewPosition(playerPosition, diceScore, maxLocation) {
-        let newPlayerPosition = 0;
-        newPlayerPosition = (playerPosition + diceScore)%maxLocation;
+    getNewPosition(player, diceScore, maxLocation) {
+        player.prevPosition = player.currentPosition;
+        player.currentPosition = (player.prevPosition + diceScore)%maxLocation;
 
-        //console.log('Old player position = ' + playerPosition);
+        //console.log('Old player position = ' + player.prevPosition + ' New player position = ' + player.currentPosition);
         
-        return newPlayerPosition;
     },
 
     /*
-        function initPlayers(playerNames)   Initialise the players array of objects with player name, position and round
+        function initPlayers(playerNames)   Initialise the players array of objects with player name, previous position, current position, balance and round
     
         input:  playerNames      array containing player names in the correct order
     
@@ -28,7 +26,7 @@ module.exports = {
     initPlayers(playerNames) {
         let players = [];
         for (let i = 0; i < playerNames.length; i++) {
-            players.push( {name : playerNames[i], position : 0, round : 0} );
+            players.push( {name : playerNames[i], prevPosition : -1, currentPosition : 0, balance : 0, round : 0} );
         }
         return players;
     }

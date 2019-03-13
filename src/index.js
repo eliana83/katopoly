@@ -6,6 +6,8 @@ let startPos = 0, endPos = 39, maxLocation = 40, minPlayerNum = 2, maxPlayerNum 
 
 let playerNames = ['Horse', 'Car'];
 
+//Go 0 +200, Go To Jail 30, Income Tax 4 10% fino a max 200, Luxury Tax 38 -75
+
 checkResult = Game.checkPlayerNumber(playerNames, minPlayerNum, maxPlayerNum);
 
 if (checkResult.requestValid) {

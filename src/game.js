@@ -58,6 +58,44 @@ module.exports = {
         return newNames;
     } ,  
 
+  /*
+        function checkLandingPosition(players[p]): the function checs current and previous position of the 
+                                                player to verify if they landed on some special positions
+                                                go, go to jail, income tax, luxury tax
+    
+        input: player               single player object.
+    */
+   checkLandingPosition(player) {
+    let goPos = 0, incomeTaxPos = 4, jailPos = 10, goToJailPos = 30, luxuryTaxPos = 38;
+    let goAmount = 200, luxuryTaxAmount = 75;
+
+    if ((player.currentPosition < player.prevPosition) || (player.currentPosition === goPos)) {
+        player.balance = player.balance + goAmount;
+        console.log('Player ' + player.name + ' passed over go, balance = ' + player.balance);
+    }
+    else {
+        switch (player.currentPosition) {
+            case goToJailPos: //go to jail
+                player.currentPosition = jailPos;
+                console.log('Player ' + player.name + ' landed on go to jail')
+                break;
+            case incomeTaxPos: //income tax
+                incomeTaxAmount = computeIncomeTaxAmount(player.balance); //calculate correct amount
+                player.balance = player.balance - incomeTaxAmount;
+                console.log('Player ' + player.name + ' landed on income tax')
+                break;
+            case luxuryTaxPos:
+                player.balance = player.balance - luxuryTaxAmount;
+                console.log('Player ' + player.name + ' landed on Luxury tax, balance = ' + player.balance);
+                break;
+            //Go 0 +200, Go To Jail 30, Income Tax 4 10% fino a max 200, Luxury Tax 38 -75
+            default:
+                break;
+
+        }
+    }
+
+} ,
 
      /*
         function playGame(players, maxRound, maxLocation): let's play
@@ -76,18 +114,35 @@ module.exports = {
             console.log('\nRound ' + round);
     
             for (let p = 0; p < players.length; p++) { 
-                firstDiceValue = diceRoll();
-                secondDiceValue = diceRoll();
-                diceScore = firstDiceValue + secondDiceValue; 
-                players[p].position = Player.getNewPosition(players[p].position, diceScore, maxLocation);
-                players[p].round = round;
-                console.log('Player ' + players[p].name + ' scored ' + diceScore + ' and is moving to position ' + players[p].position);
-    
+                let doubleDice = true;
+                while (doubleDice) {  // Inserted to satisfy this "Player passes go twice during a turn. Their balance increases by $200 each time for a total change of $400." (Player should be very lucky!)
+                    doubleDice = false;
+                    firstDiceValue = diceRoll();
+                    secondDiceValue = diceRoll();
+                    
+                    if (firstDiceValue === secondDiceValue) {
+                        doubleDice = true;
+                        console.log('Double dice value! You can roll again!')
+                    }
+                    diceScore = firstDiceValue + secondDiceValue; 
+                    //players[p].position = Player.getNewPosition(players[p].position, diceScore, maxLocation);
+                    Player.getNewPosition(players[p], diceScore, maxLocation);
+
+                    this.checkLandingPosition(players[p]); 
+
+                    players[p].round = round;
+                    // console.log('Player ' + players[p].pName + ' scored ' + diceScore + ' and is moving to position ' + players[p].position);
+                
+                } //while doubleDice
             } // player end
         } // round end
         return { roundNumber: round };
 
-    }
+    } ,
+
+     
+
+    
 };
 
 
@@ -103,3 +158,30 @@ function diceRoll() {
     let diceValue = Math.floor(Math.random() * (maxDiceVal - minDiceVal + 1)) + minDiceVal;
     return diceValue;
   }
+
+   /*
+        function computeIncomeTaxAmount(player.balance): returns the correct tax amount to be payed
+    
+        input: player.balance               player current balance
+        
+        output: taxAmount                   tax amount to be payed
+    */
+    function computeIncomeTaxAmount(balance) {
+        let maxTaxAmount = 200;
+        let taxAmount = 0;
+        let taxPercentage = 10/100;
+
+        if (balance === 0) {
+            taxAmount = 0;
+        }
+        else {
+            taxAmount = balance * taxPercentage;
+            if (taxAmount > maxTaxAmount) {
+                taxAmount = maxTaxAmount;       
+            }
+        }
+        console.log('Player balance = ' + balance + ' Tax amount = ' + taxAmount);
+        return taxAmount;
+                //Income Tax 4 10% fino a max 200, Luxury Tax 38 -75
+           
+    }
