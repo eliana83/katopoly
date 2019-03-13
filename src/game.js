@@ -59,9 +59,9 @@ module.exports = {
     } ,  
 
   /*
-        function checkLandingPosition(players[p]): the function checs current and previous position of the 
+        function checkLandingPosition(players[p]): the function checks current and previous position of the 
                                                 player to verify if they landed on some special positions
-                                                go, go to jail, income tax, luxury tax
+                                                (go, go to jail, income tax, luxury tax). Related actions are performed
     
         input: player               single player object.
     */
