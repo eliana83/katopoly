@@ -182,6 +182,6 @@ function diceRoll() {
         }
         console.log('Player balance = ' + balance + ' Tax amount = ' + taxAmount);
         return taxAmount;
-                //Income Tax 4 10% fino a max 200, Luxury Tax 38 -75
+    
            
     }
